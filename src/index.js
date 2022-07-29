@@ -37,7 +37,7 @@ app.post('/users', (request, response) => {
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  response.json(request.user.todos);
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
