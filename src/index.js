@@ -26,6 +26,10 @@ function findUser(username) {
   return users.filter((user) => user.username === username);
 }
 
+function findTodoIndex(todos, id) {
+  return todos.findIndex((todo) => todo.id === id);
+}
+
 app.post('/users', (request, response) => {
   const { name, username } = request.body;
   const user = { id: uuidv4(), name, username, todos: [] };
@@ -54,7 +58,17 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const {
+    user: { todos },
+  } = request;
+  const todoIndex = findTodoIndex(todos, request.params.id);
+  if (todoIndex < 0) response.status(404).json({ error: "not found" });
+  const updatedTodo = {
+    ...todos[todoIndex],
+    ...request.body,
+  };
+  todos.splice(todoIndex, 1, updatedTodo);
+  response.json(todos[todoIndex]);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
